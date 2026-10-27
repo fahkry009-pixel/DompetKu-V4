@@ -1,0 +1,14 @@
+{
+  "name": "dompetku-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Pencatat keuangan pribadi (HTML/CSS/JS + IndexedDB), siap GitHub Pages",
+  "scripts": {
+    "test:unit": "node tests/ledger.test.cjs",
+    "test:e2e": "node tests/e2e.cjs",
+    "test": "node tests/ledger.test.cjs && node tests/e2e.cjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.50.0"
+  }
+}

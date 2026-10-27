@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14202B">
+  <meta name="description" content="DompetKu — pencatat keuangan pribadi yang tersimpan di HP Anda.">
+  <title>DompetKu</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Ikon (satu set, gaya garis konsisten) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-in" viewBox="0 0 24 24"><path d="M12 4v13M6.5 11.5 12 17l5.5-5.5M5 20h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-out" viewBox="0 0 24 24"><path d="M12 20V7M6.5 12.5 12 7l5.5 5.5M5 4h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h14.5M15 4.5 18.5 8 15 11.5M20 16H5.5M9 12.5 5.5 16 9 19.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M12 3.5v8.5h8.5A8.5 8.5 0 1 1 12 3.5Z M15 3.8A8.5 8.5 0 0 1 20.2 9H15V3.8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-archive" viewBox="0 0 24 24"><path d="M4 6h16v4H4zM5.5 10v9h13v-9M10 14h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 16V5M7 9l5-5 5 5M5 20h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M9.5 7V4.5h5V7M7 7l1 13h8l1-13M10.5 11v5M13.5 11v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="appbar">
+    <h1 class="brand">DompetKu</h1>
+    <span class="net-state" id="net-state" hidden>Offline</span>
+  </header>
+
+  <main id="main">
+    <!-- BERANDA -->
+    <section class="screen is-active" id="screen-home" aria-labelledby="t-home">
+      <h2 class="sr-only" id="t-home">Beranda dan saldo</h2>
+      <div class="purse" id="purse"></div>
+      <div class="section-head">
+        <h2>Akun</h2>
+        <button class="btn btn-amber" id="btn-add-account" type="button"><svg class="ic"><use href="#i-plus"/></svg>Tambah akun</button>
+      </div>
+      <div id="account-list"></div>
+      <div id="archived-wrap"></div>
+    </section>
+
+    <!-- PEMASUKAN -->
+    <section class="screen" id="screen-income" aria-labelledby="t-income">
+      <h2 class="screen-title" id="t-income">Pemasukan</h2>
+      <form class="form card" id="form-income" novalidate></form>
+      <div class="section-head"><h2>Terakhir dicatat</h2></div>
+      <div id="list-income" class="list"></div>
+    </section>
+
+    <!-- PENGELUARAN -->
+    <section class="screen" id="screen-expense" aria-labelledby="t-expense">
+      <h2 class="screen-title" id="t-expense">Pengeluaran</h2>
+      <form class="form card" id="form-expense" novalidate></form>
+      <div class="section-head"><h2>Terakhir dicatat</h2></div>
+      <div id="list-expense" class="list"></div>
+    </section>
+
+    <!-- TRANSFER -->
+    <section class="screen" id="screen-transfer" aria-labelledby="t-transfer">
+      <h2 class="screen-title" id="t-transfer">Transfer</h2>
+      <div id="transfer-empty" class="empty" hidden>
+        <p>Transfer butuh minimal dua akun aktif.</p>
+        <button class="btn btn-amber" type="button" data-open-add-account><svg class="ic"><use href="#i-plus"/></svg>Tambah akun</button>
+      </div>
+      <form class="form card" id="form-transfer" novalidate></form>
+      <div class="section-head"><h2>Terakhir dicatat</h2></div>
+      <div id="list-transfer" class="list"></div>
+    </section>
+
+    <!-- REKAP -->
+    <section class="screen" id="screen-recap" aria-labelledby="t-recap">
+      <h2 class="screen-title" id="t-recap">Rekap</h2>
+      <div class="filters card">
+        <div class="row2">
+          <label class="field"><span>Periode</span>
+            <select id="recap-period">
+              <option value="month">Bulan ini</option>
+              <option value="lastmonth">Bulan lalu</option>
+              <option value="7d">7 hari terakhir</option>
+              <option value="30d">30 hari terakhir</option>
+              <option value="all">Semua waktu</option>
+              <option value="custom">Pilih tanggal…</option>
+            </select>
+          </label>
+          <label class="field"><span>Akun</span><select id="recap-account"></select></label>
+        </div>
+        <div class="row2" id="recap-custom" hidden>
+          <label class="field"><span>Dari</span><input type="date" id="recap-from"></label>
+          <label class="field"><span>Sampai</span><input type="date" id="recap-to"></label>
+        </div>
+        <div class="field" id="recap-currency-wrap" hidden>
+          <span>Mata uang</span>
+          <div class="seg" id="recap-currency"></div>
+        </div>
+      </div>
+
+      <div class="stats" id="recap-stats">
+        <div class="stat in"><span>Pemasukan</span><b id="recap-income">–</b></div>
+        <div class="stat out"><span>Pengeluaran</span><b id="recap-expense">–</b></div>
+        <div class="stat net"><span>Selisih</span><b id="recap-net">–</b></div>
+      </div>
+
+      <div class="card chart-card">
+        <h3>Pengeluaran per kategori</h3>
+        <div class="chart" id="recap-chart"></div>
+        <p class="top-cat" id="recap-top"></p>
+        <ul class="legend" id="recap-legend"></ul>
+      </div>
+
+      <div class="section-head"><h2>Transaksi</h2><span class="muted" id="recap-count"></span></div>
+      <div id="recap-list" class="list"></div>
+
+      <div class="card backup" id="backup">
+        <h3>Cadangan data</h3>
+        <p class="muted">Data tersimpan di browser HP ini saja. Ekspor cadangan secara rutin, terutama sebelum membersihkan data browser.</p>
+        <div class="btn-row">
+          <button class="btn btn-ink" id="btn-export" type="button"><svg class="ic"><use href="#i-down"/></svg>Ekspor JSON</button>
+          <button class="btn btn-line" id="btn-import" type="button"><svg class="ic"><use href="#i-up"/></svg>Impor JSON</button>
+        </div>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <p class="muted small" id="offline-state"></p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Menu utama">
+    <button type="button" data-nav="home" class="is-active"><svg class="ic"><use href="#i-home"/></svg><span>Beranda</span></button>
+    <button type="button" data-nav="income"><svg class="ic"><use href="#i-in"/></svg><span>Pemasukan</span></button>
+    <button type="button" data-nav="expense"><svg class="ic"><use href="#i-out"/></svg><span>Pengeluaran</span></button>
+    <button type="button" data-nav="transfer"><svg class="ic"><use href="#i-swap"/></svg><span>Transfer</span></button>
+    <button type="button" data-nav="recap"><svg class="ic"><use href="#i-chart"/></svg><span>Rekap</span></button>
+  </nav>
+
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Dialog: tambah/edit akun -->
+  <dialog id="dlg-account" class="sheet" aria-labelledby="acc-title">
+    <form id="form-account" novalidate>
+      <h2 id="acc-title">Tambah akun</h2>
+      <div class="field" id="acc-type-wrap">
+        <span>Jenis akun</span>
+        <div class="seg" role="radiogroup">
+          <input type="radio" name="acc-type" id="acc-type-ewallet" value="ewallet" checked><label for="acc-type-ewallet">E-Wallet</label>
+          <input type="radio" name="acc-type" id="acc-type-bank" value="bank"><label for="acc-type-bank">Bank</label>
+          <input type="radio" name="acc-type" id="acc-type-other" value="other"><label for="acc-type-other">Lainnya</label>
+        </div>
+      </div>
+      <div id="acc-detail-fields">
+        <label class="field"><span>Penyedia</span><select id="acc-provider"></select></label>
+        <label class="field" id="acc-provider-other-wrap" hidden><span>Nama penyedia</span><input id="acc-provider-other" maxlength="40" autocomplete="off" placeholder="mis. Koperasi Sejahtera"></label>
+        <label class="field"><span>Nama panggilan akun</span><input id="acc-name" maxlength="40" autocomplete="off" placeholder="mis. GoPay Pribadi"></label>
+        <label class="field"><span>Mata uang</span>
+          <select id="acc-currency"><option value="IDR">IDR — Rupiah</option><option value="USD">USD — Dolar AS</option></select>
+        </label>
+      </div>
+      <label class="field"><span id="acc-opening-label">Saldo awal</span>
+        <div class="money"><b id="acc-cur-sym">Rp</b><input id="acc-opening" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+      </label>
+      <p class="form-error" id="acc-error" role="alert" hidden></p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-line" id="acc-cancel">Batal</button>
+        <button type="submit" class="btn btn-ink" id="acc-save">Simpan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Dialog: detail akun -->
+  <dialog id="dlg-detail" class="sheet" aria-labelledby="det-title">
+    <div id="detail-body"></div>
+  </dialog>
+
+  <!-- Dialog: konfirmasi umum -->
+  <dialog id="dlg-confirm" class="sheet small" aria-labelledby="confirm-title">
+    <h2 id="confirm-title">Konfirmasi</h2>
+    <p id="confirm-msg"></p>
+    <div class="btn-row">
+      <button type="button" class="btn btn-line" id="confirm-cancel">Batal</button>
+      <button type="button" class="btn btn-ink" id="confirm-ok">Lanjut</button>
+    </div>
+  </dialog>
+
+  <!-- Dialog: impor -->
+  <dialog id="dlg-import" class="sheet" aria-labelledby="imp-title">
+    <h2 id="imp-title">Impor cadangan</h2>
+    <div id="import-body"></div>
+    <div class="btn-row">
+      <button type="button" class="btn btn-line" id="import-cancel">Batal</button>
+      <button type="button" class="btn btn-ink" id="import-confirm">Impor</button>
+    </div>
+  </dialog>
+
+  <script src="js/ledger.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+PASS  0. Awal: hanya satu akun Cash, tanpa akun lain otomatis
+PASS  0b. Akun Cash: saldo awal bisa diisi (tanpa membuat Cash ganda)
+PASS  1. Buat akun GoPay saldo awal Rp75.000 (satu form, langsung muncul)
+PASS  2. Buat akun DANA saldo awal Rp50.000
+PASS  3. Kedua akun langsung ada di form pemasukan, pengeluaran, dan transfer (tanpa refresh)
+PASS  4-5. Pemasukan Rp25.000 ke GoPay -> saldo Rp100.000
+PASS  6-7. Pengeluaran Rp10.000 dari GoPay -> saldo Rp90.000
+PASS  8-9. Transfer Rp20.000 GoPay -> DANA: GoPay Rp70.000, DANA Rp70.000
+PASS  9b. Transfer tanpa biaya tidak masuk pemasukan/pengeluaran; saldo awal bukan pemasukan
+PASS  10. Transfer DANA -> GoPay Rp10.000 + biaya admin Rp2.500: biaya dihitung tepat sekali
+PASS  11. Edit transfer (nominal 15.000, biaya 1.000): saldo & biaya ikut benar
+PASS  12. Hapus transfer: saldo kembali konsisten, biaya admin ikut hilang
+PASS  13. Grafik & rekap dibaca dari transaksi: urut terbesar, persen, perubahan periode
+PASS  Validasi UI: nominal kosong, 0, negatif ditolak dengan pesan jelas; saldo tidak berubah
+PASS  Validasi DB: akun tak valid / ID kosong / transfer ke akun sama ditolak & tidak mengubah apa pun
+PASS  Klik ganda tombol Simpan tidak membuat transaksi ganda
+PASS  14. Saldo & transaksi tetap ada setelah halaman di-refresh
+PASS  15a. Ekspor backup JSON benar-benar menghasilkan file valid
+PASS  15b. Impor file tidak valid ditolak dengan pesan; data tidak berubah
+PASS  15c. Impor "Gabungkan" file yang sama: ID duplikat dilewati, tidak ada data ganda
+PASS  15d. Impor "Ganti semua" (dengan konfirmasi) memulihkan keadaan backup
+PASS  15e. Impor "Gabungkan" ke data yang lebih kecil menambah akun & transaksi yang belum ada
+PASS  16. Tutup browser lalu buka lagi: data ada, tambah akun & transfer tetap jalan
+PASS  Akun USD: saldo terpisah dari IDR, tidak dijumlahkan; transfer lintas mata uang butuh nominal diterima
+PASS  Arsipkan akun: hilang dari form, riwayat tetap, bisa diaktifkan lagi
+PASS  17. Offline: aplikasi tetap terbuka dan bisa mencatat transaksi
+PASS  18. Tidak ada error IndexedDB/keyPath/JS selama seluruh pengujian
+
+27 lulus, 0 gagal dari 27 langkah
